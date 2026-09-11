@@ -1,5 +1,8 @@
 HELP.md
 target/
+
+# docker compose 数据卷（Milvus / MinIO / etcd）
+volumes/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

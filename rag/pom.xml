@@ -38,6 +38,12 @@
             <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
 
+        <!-- 参数校验（@NotBlank + @Valid） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
         <!-- Spring AI 2.0 - OpenAI 兼容协议（对接 LM Studio） -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
@@ -49,6 +55,18 @@
                     <artifactId>swagger-annotations</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <!-- Milvus 向量数据库 -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-vector-store-milvus</artifactId>
+        </dependency>
+
+        <!-- Tika 文档解析（txt/md/pdf/docx 等格式） -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-tika-document-reader</artifactId>
         </dependency>
 
         <!-- Knife4j Next（社区维护分支，支持 Spring Boot 4.x） -->
