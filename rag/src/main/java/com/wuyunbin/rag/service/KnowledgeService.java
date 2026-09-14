@@ -3,8 +3,12 @@ package com.wuyunbin.rag.service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.wuyunbin.rag.config.KnowledgeConfig.SemanticTextSplitter;
@@ -14,13 +18,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.tika.TikaDocumentReader;
 import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 知识库服务：文档解析 -> 文本切分 -> 向量化 -> 写入 Milvus。
+ * 知识库服务：文档解析 -> 清洗切片 -> 向量化 -> 写入 Milvus。
  */
 @Slf4j
 @Service
@@ -35,6 +40,12 @@ public class KnowledgeService {
 
     private final SemanticTextSplitter semanticTextSplitter;
 
+    private final MarkdownChunkSplitter markdownChunkSplitter;
+
+    /** 清洗切片开关：true 走 Markdown 状态机切片（过滤曲调/目录、表格整块保留），false 回退语义切分 */
+    @Value("${rag.chunk.filter-enabled:true}")
+    private boolean chunkFilterEnabled;
+
     /**
      * 导入上传的单个文档。
      *
@@ -45,7 +56,7 @@ public class KnowledgeService {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("上传文件为空");
         }
-        int chunkCount = importResource(file.getResource(), file.getOriginalFilename());
+        int chunkCount = importResource(file.getResource(), file.getOriginalFilename(), new AtomicInteger());
         return new ImportResult(1, chunkCount);
     }
 
@@ -65,9 +76,10 @@ public class KnowledgeService {
                     .filter(this::isSupported)
                     .sorted()
                     .toList();
+            AtomicInteger chunkCursor = new AtomicInteger();
             int totalChunks = 0;
             for (Path file : files) {
-                totalChunks += importResource(new FileSystemResource(file), file.getFileName().toString());
+                totalChunks += importResource(new FileSystemResource(file), file.getFileName().toString(), chunkCursor);
             }
             log.info("目录导入完成: {} 个文件, 共 {} 个文本块", files.size(), totalChunks);
             return new ImportResult(files.size(), totalChunks);
@@ -78,18 +90,55 @@ public class KnowledgeService {
     }
 
     /**
-     * 解析 -> 切分 -> 向量化 -> 写入 Milvus，返回生成的文本块数量。
+     * 解析 -> 清洗切片 -> 向量化 -> 写入 Milvus，返回生成的文本块数量。
+     * chunkCursor 用于 chunk_index 跨文件全局自增。
      */
-    private int importResource(Resource resource, String fileName) {
+    private int importResource(Resource resource, String fileName, AtomicInteger chunkCursor) {
         List<Document> documents = new TikaDocumentReader(resource).get();
         if (documents.isEmpty() || documents.stream().allMatch(d -> d.getText().isBlank())) {
             log.warn("文档无可用内容，已跳过: {}", fileName);
             return 0;
         }
+        return chunkFilterEnabled
+                ? importStatefulChunks(documents, fileName, chunkCursor)
+                : importSemanticChunks(documents, fileName, chunkCursor);
+    }
+
+    /**
+     * 清洗切片路径：状态机过滤校歌曲调行/目录、表格整块保留，直接落库（不经语义二次切分）。
+     */
+    private int importStatefulChunks(List<Document> documents, String fileName, AtomicInteger chunkCursor) {
+        String text = documents.stream()
+                .map(Document::getText)
+                .filter(t -> t != null && !t.isBlank())
+                .collect(Collectors.joining("\n"));
+        List<MarkdownChunkSplitter.Chunk> chunks =
+                markdownChunkSplitter.split(fileName, chunkCursor.get(), text.lines().toList());
+        if (chunks.isEmpty()) {
+            log.warn("文档清洗切片后为空，已跳过: {}", fileName);
+            return 0;
+        }
+        List<Document> docs = new ArrayList<>(chunks.size());
+        for (MarkdownChunkSplitter.Chunk chunk : chunks) {
+            docs.add(new Document(chunk.text(), Map.of(
+                    "file_name", fileName,
+                    "chunk_index", chunk.chunkIndex(),
+                    "section_title", chunk.sectionTitle() == null ? "" : chunk.sectionTitle())));
+        }
+        vectorStore.add(docs);
+        chunkCursor.addAndGet(chunks.size());
+        log.info("文档已导入(状态机切片): {} -> {} 个文本块", fileName, chunks.size());
+        return chunks.size();
+    }
+
+    /**
+     * 旧语义切分路径（rag.chunk.filter-enabled=false 时回滚使用）。
+     */
+    private int importSemanticChunks(List<Document> documents, String fileName, AtomicInteger chunkCursor) {
         List<Document> chunks = semanticTextSplitter.split(documents);
-        for (int i = 0; i < chunks.size(); i++) {
-            chunks.get(i).getMetadata().put("file_name", fileName);
-            chunks.get(i).getMetadata().put("chunk_index", i);
+        for (Document chunk : chunks) {
+            chunk.getMetadata().put("file_name", fileName);
+            chunk.getMetadata().put("chunk_index", chunkCursor.getAndIncrement());
         }
         vectorStore.add(chunks);
         log.info("文档已导入: {} -> {} 个文本块", fileName, chunks.size());

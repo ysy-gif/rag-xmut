@@ -1,0 +1,83 @@
+{
+  "dataset": "jmu-freshman-handbook-2025-qa",
+  "source_document": "doc/jmu新生手册.txt",
+  "description": "基于《集美大学2025级新生手册》生成的RAG评测问题集，与 jmu-admission-2024-questions.json 同构",
+  "structure": {
+    "precise": 4,
+    "summary": 3,
+    "absent": 3
+  },
+  "absent_policy": "absent 类型问题的答案在源文档中不存在，期望模型明确告知未在文档中找到相关信息，禁止编造答案",
+  "questions": [
+    {
+      "id": 1,
+      "type": "precise",
+      "question": "集美大学2025级本科新生的报到时间是什么时候？",
+      "reference_answer": "2025年9月10日 7:30-17:30",
+      "in_document": true
+    },
+    {
+      "id": 2,
+      "type": "precise",
+      "question": "学校在2025年新生报到期间安排了哪些接站地点？接站时间是什么时候？",
+      "reference_answer": "接站时间为2025年9月10日7:00-18:00，地点为高崎机场和厦门北站。",
+      "in_document": true
+    },
+    {
+      "id": 3,
+      "type": "precise",
+      "question": "集美大学2025级新生的落户办理截止日期是什么时候？",
+      "reference_answer": "入学当年的12月31日。",
+      "in_document": true
+    },
+    {
+      "id": 4,
+      "type": "precise",
+      "question": "集美大学新生QQ群的群号是多少？",
+      "reference_answer": "977385535、1009197588、470467808",
+      "in_document": true
+    },
+    {
+      "id": 5,
+      "type": "summary",
+      "question": "请概括集美大学面向家庭经济困难学生建立的资助体系。",
+      "reference_answer": "集美大学以\"立德树人，以生为本\"为工作宗旨，建立了国家资助、学校奖助、社会捐助、学生自助\"四位一体\"的发展型资助体系，\"奖助贷勤偿补保\"多元经济保障贯穿学习始终；同时实行\"绿色通道\"入学制度，家庭经济困难新生可先行办理入学手续。",
+      "in_document": true
+    },
+    {
+      "id": 6,
+      "type": "summary",
+      "question": "请概括新生在报到点办理入学手续的流程。",
+      "reference_answer": "新生凭入学通知书到所在学院报到点的\"1号窗口\"领取注册单；关注\"集美大学财务处\"微信公众号查询缴费票据，凭缴费电子票据办理入学注册手续；随后由学院引导入住、领取军训用品、自愿选购生活用品；入住后由学院统一收取身份证复印件（或派出所证明）、党团关系转接介绍信、个人档案、户口关系迁移证等材料并转交相关部门。家庭经济困难无法缴费者可通过学院设立的绿色通道先行办理入学手续。",
+      "in_document": true
+    },
+    {
+      "id": 7,
+      "type": "summary",
+      "question": "请概括手册中提到的电信网络诈骗主要类型及总体防范原则。",
+      "reference_answer": "主要类型包括：假冒电商客服退款诈骗、冒充亲友或老师借钱、冒充公检法及医保公安办案、虚假中奖与刷单返利、机票车票改签诈骗、演唱会演出票务诈骗。总体防范原则：仅在官方渠道核实和操作、大额转账前电话本人核实、不点击陌生链接、不缴纳任何前置费用、不参与网络刷单、远离校园网贷，遇诈骗第一时间报警并联系辅导员（集美学村派出所0592-7797110）。",
+      "in_document": true
+    },
+    {
+      "id": 8,
+      "type": "absent",
+      "question": "集美大学2025级新生开学典礼在哪一天举行？",
+      "reference_answer": null,
+      "in_document": false
+    },
+    {
+      "id": 9,
+      "type": "absent",
+      "question": "集美大学学生宿舍晚上几点熄灯断电？",
+      "reference_answer": null,
+      "in_document": false
+    },
+    {
+      "id": 10,
+      "type": "absent",
+      "question": "集美大学2025级的推荐免试研究生比例是多少？",
+      "reference_answer": null,
+      "in_document": false
+    }
+  ]
+}

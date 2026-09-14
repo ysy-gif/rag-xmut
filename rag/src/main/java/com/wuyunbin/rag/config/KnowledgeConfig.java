@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import com.wuyunbin.rag.service.MarkdownChunkSplitter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.transformer.splitter.TextSplitter;
@@ -28,6 +29,14 @@ public class KnowledgeConfig {
     @Bean
     public SemanticTextSplitter semanticTextSplitter(EmbeddingModel embeddingModel) {
         return new SemanticTextSplitter(embeddingModel, SIMILARITY_THRESHOLD, MIN_CHUNK_CHARS, MAX_CHUNK_CHARS);
+    }
+
+    /**
+     * Markdown 状态机切片器：无状态、线程安全，供清洗切片路径（rag.chunk.filter-enabled=true）使用。
+     */
+    @Bean
+    public MarkdownChunkSplitter markdownChunkSplitter() {
+        return new MarkdownChunkSplitter();
     }
 
     /**

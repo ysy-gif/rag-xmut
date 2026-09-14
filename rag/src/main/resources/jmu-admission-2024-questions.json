@@ -1,0 +1,83 @@
+{
+  "dataset": "jmu-admission-handbook-2024-qa",
+  "source_document": "doc/jmu招生手册.txt",
+  "description": "基于《集美大学2024招生手册》生成的RAG评测问题集，与 jmu-freshman-2025-questions.json 同构",
+  "structure": {
+    "precise": 4,
+    "summary": 3,
+    "absent": 3
+  },
+  "absent_policy": "absent 类型问题的答案在源文档中不存在，期望模型明确告知未在文档中找到相关信息，禁止编造答案",
+  "questions": [
+    {
+      "id": 1,
+      "type": "precise",
+      "question": "集美大学的国标代码是多少？",
+      "reference_answer": "10390",
+      "in_document": true
+    },
+    {
+      "id": 2,
+      "type": "precise",
+      "question": "集美大学提前批航海技术专业对考生的身高要求是多少？",
+      "reference_answer": "160cm及以上。",
+      "in_document": true
+    },
+    {
+      "id": 3,
+      "type": "precise",
+      "question": "集美大学拥有的世界上最大的教学实习船叫什么名字？总载重是多少？",
+      "reference_answer": "\"育德\"轮，总载重达6.4万吨。",
+      "in_document": true
+    },
+    {
+      "id": 4,
+      "type": "precise",
+      "question": "集美大学的招生监督电话是多少？",
+      "reference_answer": "0592-6181580",
+      "in_document": true
+    },
+    {
+      "id": 5,
+      "type": "summary",
+      "question": "请概括集美大学的专业调配原则。",
+      "reference_answer": "集美大学采用\"分数优先\"方式调配，根据投档成绩从高到低遵循考生专业志愿进行调配，专业志愿间不设级差；所填志愿均无法满足时，服从专业调剂者调剂至未录取满额专业；以院校专业组为填报单位的省份只能在同一专业组内按\"分数优先\"调配；原则上认可生源省份的加（降）分政策，以投档分为调配依据，同分时按各省排序规则排序，仍相同则参考高中综合素质评价择优；内蒙古按\"招生计划1:1范围内按专业志愿排队录取\"；考生高考加分不适用于不分省计划。",
+      "in_document": true
+    },
+    {
+      "id": 6,
+      "type": "summary",
+      "question": "请概括校主陈嘉庚先生的生平及主要贡献。",
+      "reference_answer": "陈嘉庚（1874.10.21-1961.8.12）出生于厦门集美，17岁赴新加坡随父经商成为东南亚著名\"橡胶大王\"。他秉持\"教育为立国之本，兴学乃国民天职\"理念，1913年起回家乡先后创办集美幼儿园、小学、中学、师范、水产、航海、商科、农林等学校（统称集美学校）和厦门大学。抗战期间被推举为南洋华侨筹赈祖国难民总会主席，为祖国抗战胜利作出不可磨灭的贡献。1949年回国定居参政，曾任全国政协副主席、全国人大常委、中国侨联首届主席。被毛泽东誉为\"华侨旗帜、民族光辉\"，1990年第2963号小行星被命名为\"陈嘉庚星\"。",
+      "in_document": true
+    },
+    {
+      "id": 7,
+      "type": "summary",
+      "question": "请概括集美大学的国际交流与合作情况。",
+      "reference_answer": "学校与130多所国（境）外高校开展学术交流与合作；2021年以来开展来自14个国家和地区32所大学的156个长短期国际交流项目，约1300名在校生参加，覆盖所有本科专业学院；专门设立\"集美大学学生国（境）外交流学习基金\"，2021年迄今已投入500多万元。2023年获批2个教育部\"中外高水平大学学生交流计划\"中澳双学位联合培养项目，与阿德莱德大学、麦考瑞大学开展\"2+2\"分段联合培养（在读49人）；另有与法国雷恩高等商学院\"3+2/1.5\"本硕连读项目、与美国加州大学欧文分校合作项目等。",
+      "in_document": true
+    },
+    {
+      "id": 8,
+      "type": "absent",
+      "question": "集美大学2024年在福建省的最低录取分数线是多少？",
+      "reference_answer": null,
+      "in_document": false
+    },
+    {
+      "id": 9,
+      "type": "absent",
+      "question": "集美大学2024届毕业生的就业率是多少？",
+      "reference_answer": null,
+      "in_document": false
+    },
+    {
+      "id": 10,
+      "type": "absent",
+      "question": "集美大学研究生各专业的学费标准是多少？",
+      "reference_answer": null,
+      "in_document": false
+    }
+  ]
+}
